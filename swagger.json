@@ -1,0 +1,315 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "device-service",
+    "description" : "Promethean Device Service API",
+    "version" : "0.3.0-oas3"
+  },
+  "servers" : [ {
+    "url" : "/"
+  } ],
+  "paths" : {
+    "/devices" : {
+      "get" : {
+        "tags" : [ "Devices" ],
+        "description" : "Returns a device by serialNumber",
+        "operationId" : "getDevices",
+        "parameters" : [ {
+          "name" : "serialNumber",
+          "in" : "query",
+          "description" : "Device's serialNumber",
+          "required" : false,
+          "style" : "form",
+          "explode" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "A devices that serialNumber as query.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/DeviceInfo"
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid request"
+          },
+          "404" : {
+            "description" : "Not Found"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Devices" ],
+        "description" : "update device info (just put attribute that need modify)",
+        "operationId" : "putDevice",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DeviceInfo"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful"
+          },
+          "400" : {
+            "description" : "Invalid request."
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Devices" ],
+        "description" : "Create or Update device(need put all attribute)",
+        "operationId" : "postDevice",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DeviceInfo"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful"
+          },
+          "400" : {
+            "description" : "Invalid request."
+          }
+        }
+      },
+      "patch" : {
+        "tags" : [ "Devices" ],
+        "description" : "Update enrolled attribute that device match given serialNumber.",
+        "operationId" : "patchDevice",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DeviceEnrolled"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful"
+          },
+          "400" : {
+            "description" : "Invalid request."
+          }
+        }
+      }
+    },
+    "/devices/batch" : {
+      "put" : {
+        "tags" : [ "Devices" ],
+        "description" : "Batch Update devices(just put attribute that need modify)",
+        "operationId" : "putBatchDevice",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DeviceInfoArray"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful"
+          },
+          "400" : {
+            "description" : "Invalid request."
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Devices" ],
+        "description" : "Batch Create or Replace devices(need put all attribute necessary)",
+        "operationId" : "postBatchDevice",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/DeviceInfoArray"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful"
+          },
+          "400" : {
+            "description" : "Invalid request."
+          }
+        }
+      }
+    },
+    "/devices/frombucket" : {
+      "post" : {
+        "tags" : [ "Devices" ],
+        "description" : "Batch Create or Update devices(need put all attribute) from a file on s3.",
+        "operationId" : "postBatchFromBucketDevice",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/BucketSchema"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "Successful"
+          },
+          "400" : {
+            "description" : "Invalid request."
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "DeviceEnrolled" : {
+        "type" : "object",
+        "properties" : {
+          "serialNumber" : {
+            "type" : "string"
+          },
+          "enrolled" : {
+            "type" : "boolean"
+          }
+        }
+      },
+      "UrlSchema" : {
+        "type" : "object",
+        "properties" : {
+          "url" : {
+            "type" : "string"
+          }
+        }
+      },
+      "BucketSchema" : {
+        "type" : "object",
+        "properties" : {
+          "bucket" : {
+            "type" : "string"
+          },
+          "path" : {
+            "type" : "string"
+          }
+        }
+      },
+      "DeviceInfo" : {
+        "type" : "object",
+        "properties" : {
+          "serialNumber" : {
+            "type" : "string",
+            "example" : "ABC123456"
+          },
+          "enrolled" : {
+            "type" : "boolean",
+            "nullable" : true,
+            "example" : true
+          },
+          "assetKey" : {
+            "type" : "string"
+          },
+          "modelNumber" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "description" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "OSVersion" : {
+            "type" : "string",
+            "nullable" : true,
+            "example" : "Android 6.0 Marshmallow"
+          },
+          "version" : {
+            "type" : "string",
+            "nullable" : true,
+            "example" : "1.1.0.0"
+          },
+          "productID" : {
+            "type" : "string",
+            "nullable" : true,
+            "example" : "0xb101"
+          },
+          "vendorID" : {
+            "type" : "string",
+            "nullable" : true,
+            "example" : "0x28e1"
+          },
+          "panelClass" : {
+            "type" : "string",
+            "nullable" : true
+          },
+          "lastUpdatedDate" : {
+            "type" : "number",
+            "description" : "Millisecond timestamp",
+            "nullable" : true,
+            "example" : 1499825149257
+          },
+          "installDate" : {
+            "type" : "string",
+            "description" : "date",
+            "nullable" : true,
+            "example" : "2018-06-03T00:00:00.000Z"
+          },
+          "productCode" : {
+            "type" : "string"
+          },
+          "shipDate" : {
+            "type" : "string",
+            "description" : "date",
+            "nullable" : true,
+            "example" : "1499825149457"
+          },
+          "warrantyType" : {
+            "type" : "string",
+            "example" : "2018-06-03T00:00:00.000Z"
+          },
+          "warrantyEndDate" : {
+            "type" : "string",
+            "description" : "date",
+            "nullable" : true,
+            "example" : "2018-06-03T00:00:00.000Z"
+          },
+          "mac" : {
+            "type" : "string",
+            "nullable" : true,
+            "example" : "00-23-5A-15-99-45"
+          },
+          "abnormal" : {
+            "type" : "boolean",
+            "nullable" : true,
+            "example" : true
+          }
+        }
+      },
+      "DeviceInfoArray" : {
+        "type" : "array",
+        "items" : {
+          "$ref" : "#/components/schemas/DeviceInfo"
+        }
+      }
+    }
+  }
+}
